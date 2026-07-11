@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+<title>💕 A Special Question 💕</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#1a0a10;color:#fff;min-height:100dvh;overflow:hidden;touch-action:manipulation}
+#app{width:100vw;height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.hearts-bg{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.heart-float{position:absolute;color:#ff69b4;opacity:0.15;animation:floatUp linear infinite;font-size:24px}
+@keyframes floatUp{0%{transform:translateY(100vh) rotate(0deg);opacity:0}10%{opacity:0.15}90%{opacity:0.15}100%{transform:translateY(-10vh) rotate(360deg);opacity:0}}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;z-index:1;opacity:0;pointer-events:none;transition:opacity 0.5s}
+.screen.active{opacity:1;pointer-events:auto}
+h1{font-size:2rem;margin-bottom:24px;text-shadow:0 0 20px rgba(255,105,180,0.5)}
+h2{font-size:1.5rem;margin-bottom:16px;color:#ff69b4}
+p{font-size:1.1rem;line-height:1.6;margin-bottom:16px;color:#ffb6c1}
+.btn{padding:16px 36px;border:none;border-radius:50px;font-size:1.2rem;font-weight:700;cursor:pointer;transition:all 0.2s;position:relative;min-width:120px;-webkit-user-select:none;user-select:none}
+.btn-yes{background:#22c55e;color:#fff;box-shadow:0 0 20px rgba(34,197,94,0.4)}
+.btn-no{background:#ef4444;color:#fff;box-shadow:0 0 20px rgba(239,68,68,0.4)}
+.btn-pink{background:linear-gradient(135deg,#ff69b4,#ff1493);color:#fff;box-shadow:0 0 20px rgba(255,105,180,0.5)}
+.btn-pink:active{transform:scale(0.95)}
+.btn-row{display:flex;gap:20px;margin-top:20px;flex-wrap:wrap;justify-content:center}
+.crossed{position:relative;pointer-events:none;opacity:0.5}
+.crossed::after{content:'✕';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3rem;color:#ef4444;font-weight:900}
+.restart-btn{position:absolute;top:16px;left:16px;background:none;border:1px solid rgba(255,105,180,0.3);color:#ff69b4;padding:8px 14px;border-radius:20px;font-size:0.8rem;cursor:pointer;z-index:10;opacity:0.6;transition:opacity 0.2s}
+.restart-btn:active{opacity:1}
+/* Hangman */
+.hangman-word{font-size:1.8rem;letter-spacing:6px;margin:16px 0;font-family:monospace;color:#ff69b4;word-break:break-all;max-width:90vw}
+.keyboard{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:380px;margin-top:12px}
+.key{width:36px;height:40px;border:2px solid #ff69b4;background:transparent;color:#fff;border-radius:8px;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all 0.15s}
+.key:active{transform:scale(0.9)}
+.key.correct{background:#22c55e;border-color:#22c55e}
+.key.wrong{background:#ef4444;border-color:#ef4444;opacity:0.5}
+.key:disabled{pointer-events:none}
+.hangman-drawing{margin:8px 0;min-height:120px;display:flex;align-items:center;justify-content:center}
+.hangman-drawing svg{width:120px;height:140px}
+.hangman-drawing svg line,.hangman-drawing svg circle{stroke:#ff69b4;stroke-width:3;fill:none;stroke-linecap:round}
+.trash-talk{color:#fbbf24;font-size:1.1rem;font-weight:700;min-height:30px;margin:8px 0;animation:shake 0.3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+/* Challenge 2 */
+.moving-btn{position:absolute;padding:14px 28px;border:none;border-radius:50px;background:#22c55e;color:#fff;font-size:1.1rem;font-weight:700;cursor:pointer;z-index:10;transition:none}
+.flash-red{position:fixed;inset:0;background:red;z-index:100;display:flex;align-items:center;justify-content:center;animation:flashAnim 0.8s forwards}
+.flash-red span{font-size:2.5rem;font-weight:900;color:#fff;text-shadow:0 0 30px #000;animation:flashText 0.8s}
+@keyframes flashAnim{0%{opacity:1}70%{opacity:1}100%{opacity:0}}
+@keyframes flashText{0%{transform:scale(3);opacity:0}20%{transform:scale(1);opacity:1}80%{opacity:1}100%{opacity:0}}
+/* Challenge 3 */
+.timer-display{font-size:4rem;font-weight:900;color:#ff69b4;margin:16px 0;font-variant-numeric:tabular-nums}
+.hug-btn{width:160px;height:160px;border-radius:50%;border:4px solid #ff69b4;background:linear-gradient(135deg,#ff69b4,#ff1493);color:#fff;font-size:1.5rem;font-weight:900;cursor:pointer;transition:transform 0.1s;display:flex;align-items:center;justify-content:center;-webkit-user-select:none;user-select:none}
+.hug-btn:active{transform:scale(0.92)}
+.hug-progress{width:200px;height:8px;background:#333;border-radius:4px;margin-top:16px;overflow:hidden}
+.hug-fill{height:100%;background:linear-gradient(90deg,#ff69b4,#ff1493);border-radius:4px;transition:width 0.05s linear}
+/* Confetti */
+.confetti-piece{position:fixed;width:10px;height:10px;z-index:200;animation:confettiFall linear forwards}
+@keyframes confettiFall{0%{transform:translateY(-10vh) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+/* Transition overlay */
+.overlay{position:fixed;inset:0;background:#1a0a10;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.overlay h2{color:#ff69b4;font-size:1.5rem;margin-bottom:12px}
+.overlay p{color:#ffb6c1;font-size:1.1rem}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const $ = id => document.getElementById(id);
+const app = $('app');
+
+// Floating hearts background
+function createHearts(){
+  const c = document.createElement('div');
+  c.className='hearts-bg';
+  for(let i=0;i<20;i++){
+    const h=document.createElement('div');
+    h.className='heart-float';
+    h.textContent='💕';
+    h.style.left=Math.random()*100+'%';
+    h.style.animationDuration=(8+Math.random()*12)+'s';
+    h.style.animationDelay=(-Math.random()*20)+'s';
+    h.style.fontSize=(16+Math.random()*20)+'px';
+    c.appendChild(h);
+  }
+  app.appendChild(c);
+}
+createHearts();
+
+function clearScreens(){
+  app.querySelectorAll('.screen,.overlay').forEach(e=>e.remove());
+}
+
+function showScreen(html,cls=''){
+  const d=document.createElement('div');
+  d.className='screen active '+cls;
+  d.innerHTML=html;
+  app.appendChild(d);
+  return d;
+}
+
+function addRestartBtn(screen){
+  const b=document.createElement('button');
+  b.className='restart-btn';
+  b.textContent='↩ Return to start';
+  b.onclick=()=>showLanding(false);
+  screen.appendChild(b);
+}
+
+function showOverlay(lines, duration, cb){
+  const d=document.createElement('div');
+  d.className='overlay';
+  d.style.opacity='0';
+  d.style.transition='opacity 0.4s';
+  app.appendChild(d);
+  requestAnimationFrame(()=>d.style.opacity='1');
+  let i=0;
+  function next(){
+    if(i>=lines.length){
+      setTimeout(()=>{
+        d.style.opacity='0';
+        setTimeout(()=>{d.remove();if(cb)cb();},400);
+      }, duration);
+      return;
+    }
+    const tag=i===0?'h2':'p';
+    const el=document.createElement(tag);
+    el.textContent=lines[i];
+    el.style.opacity='0';el.style.transition='opacity 0.4s';
+    d.appendChild(el);
+    requestAnimationFrame(()=>el.style.opacity='1');
+    i++;
+    setTimeout(next, 1200);
+  }
+  next();
+}
+
+// ===== LANDING =====
+function showLanding(final=false){
+  clearScreens();
+  if(final){
+    const s=showScreen(`
+      <h1>Will you be my valentine's? 💕</h1>
+      <div class="btn-row">
+        <button class="btn btn-no" id="finalRedYes">Yes but in red</button>
+        <button class="btn btn-yes" id="finalYes">Yes</button>
+      </div>
+    `);
+    addRestartBtn(s);
+    s.querySelector('#finalYes').onclick=()=>{
+      clearScreens();
+      showConfettiScreen();
+    };
+    s.querySelector('#finalRedYes').onclick=()=>{
+      clearScreens();
+      showConfettiScreen();
+    };
+  } else {
+    const s=showScreen(`
+      <h1>Will you be my valentine's? 💕</h1>
+      <div class="btn-row">
+        <button class="btn btn-no" id="btnNo">No</button>
+        <button class="btn btn-yes crossed" id="btnYes">Yes</button>
+      </div>
+    `);
+    s.querySelector('#btnNo').onclick=()=>{
+      clearScreens();
+      showOverlay(["why u h8 mi ;c?","fine i will let u answer the question again only if you finish my games"],800,()=>{
+        startHangman();
+      });
+    };
+  }
+}
+
+// ===== CONFETTI =====
+function showConfettiScreen(){
+  const s=showScreen(`
+    <h1 style="font-size:2.5rem">💖 YAY! 💖</h1>
+    <p style="font-size:1.3rem;color:#ff69b4">Happy Valentine's Day! 💕</p>
+    <p>I love you! 🥰</p>
+  `);
+  addRestartBtn(s);
+  launchConfetti();
+}
+
+function launchConfetti(){
+  const colors=['#ff69b4','#ff1493','#ff6b6b','#fbbf24','#22c55e','#60a5fa','#a78bfa','#fff'];
+  for(let i=0;i<120;i++){
+    const c=document.createElement('div');
+    c.className='confetti-piece';
+    c.style.left=Math.random()*100+'vw';
+    c.style.background=colors[Math.floor(Math.random()*colors.length)];
+    c.style.width=(6+Math.random()*10)+'px';
+    c.style.height=(6+Math.random()*10)+'px';
+    c.style.borderRadius=Math.random()>0.5?'50%':'2px';
+    c.style.animationDuration=(2+Math.random()*3)+'s';
+    c.style.animationDelay=(Math.random()*2)+'s';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),6000);
+  }
+}
+
+// ===== HANGMAN =====
+function startHangman(){
+  clearScreens();
+  const answer="I LABE YOI MUR BLUS AI HAB YUU ZOH I VIN";
+  const uniqueLetters=new Set(answer.replace(/[^A-Z]/g,''));
+  const maxWrong=6;
+  let guessed=new Set();
+  let wrong=0;
+  let firstWrong=true;
+  const trashTalks=["tsk tsk tsk","even a baby could do this","skill issue","what a loser"];
+
+  function getHangmanSVG(w){
+    const parts=[
+      '',
+      `<circle cx="70" cy="30" r="12"/>`,
+      `<line x1="70" y1="42" x2="70" y2="80"/>`,
+      `<line x1="70" y1="55" x2="50" y2="70"/>`,
+      `<line x1="70" y1="55" x2="90" y2="70"/>`,
+      `<line x1="70" y1="80" x2="52" y2="105"/>`,
+      `<line x1="70" y1="80" x2="88" y2="105"/>`
+    ];
+    let svg=`<svg viewBox="0 0 120 140">
+      <line x1="10" y1="135" x2="60" y2="135"/>
+      <line x1="30" y1="135" x2="30" y2="10"/>
+      <line x1="30" y1="10" x2="70" y2="10"/>
+      <line x1="70" y1="10" x2="70" y2="18"/>`;
+    for(let i=1;i<=w&&i<parts.length;i++) svg+=parts[i];
+    svg+=`</svg>`;
+    return svg;
+  }
+
+  function render(){
+    clearScreens();
+    let display=answer.split('').map(c=>{
+      if(c===' ')return '  ';
+      if(!/[A-Z]/.test(c))return c;
+      return guessed.has(c)?c:'_';
+    }).join('');
+
+    const won=[...uniqueLetters].every(l=>guessed.has(l));
+    const lost=wrong>=maxWrong;
+
+    const s=showScreen(`
+      <h2>Hangman</h2>
+      <div class="hangman-drawing">${getHangmanSVG(wrong)}</div>
+      <div style="color:#ef4444;font-size:0.9rem">${wrong}/${maxWrong} wrong</div>
+      <div class="hangman-word">${display}</div>
+      <div class="trash-talk" id="trash"></div>
+      <div class="keyboard" id="kb"></div>
+    `);
+    addRestartBtn(s);
+
+    if(won){
+      s.querySelector('#trash').textContent="heyyy, you weren't supposed to win";
+      setTimeout(()=>{startChallenge2();},2500);
+      return;
+    }
+    if(lost){
+      s.querySelector('#trash').textContent="wow, just wow";
+      setTimeout(()=>{
+        showOverlay(["Let's try that again..."],800,()=>{
+          guessed=new Set();wrong=0;firstWrong=true;render();
+        });
+      },2000);
+      return;
+    }
+
+    const kb=s.querySelector('#kb');
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(l=>{
+      const b=document.createElement('button');
+      b.className='key';
+      b.textContent=l;
+      if(guessed.has(l)){
+        b.disabled=true;
+        b.classList.add(uniqueLetters.has(l)?'correct':'wrong');
+      }
+      b.onclick=()=>{
+        guessed.add(l);
+        if(!uniqueLetters.has(l)){
+          wrong++;
+          if(firstWrong){
+            firstWrong=false;
+            render();
+            setTimeout(()=>{
+              const t=document.querySelector('.trash-talk');
+              if(t)t.textContent="if you lose this game I will make u eat ketchup";
+            },50);
+            return;
+          }
+        }
+        render();
+        if(!uniqueLetters.has(l)&&!firstWrong){
+          setTimeout(()=>{
+            const t=document.querySelector('.trash-talk');
+            if(t)t.textContent=trashTalks[Math.floor(Math.random()*trashTalks.length)];
+          },50);
+        }
+      };
+      kb.appendChild(b);
+    });
+  }
+  render();
+}
+
+// ===== CHALLENGE 2 =====
+function startChallenge2(){
+  clearScreens();
+  const s=showScreen(`
+    <h2>🐱 Quick Question</h2>
+    <p style="font-size:1.3rem;color:#fff;margin-bottom:30px">Who was the eepy cat?</p>
+    <button class="btn btn-pink" id="aleksBtn" style="margin-bottom:20px">Aleks</button>
+    <div style="position:relative;width:100%;height:200px" id="moveArea">
+      <button class="moving-btn" id="guruBtn">Guru</button>
+    </div>
+  `);
+  addRestartBtn(s);
+
+  const guru=s.querySelector('#guruBtn');
+  const area=s.querySelector('#moveArea');
+  let moveInterval;
+
+  function moveGuru(){
+    const aw=area.offsetWidth-100;
+    const ah=area.offsetHeight-50;
+    guru.style.left=Math.random()*aw+'px';
+    guru.style.top=Math.random()*ah+'px';
+  }
+  moveInterval=setInterval(moveGuru,400);
+  moveGuru();
+
+  guru.onclick=(e)=>{
+    e.preventDefault();
+    const flash=document.createElement('div');
+    flash.className='flash-red';
+    flash.innerHTML='<span>WRONG ANSWER</span>';
+    document.body.appendChild(flash);
+    document.body.style.animation='shake 0.3s';
+    setTimeout(()=>{
+      flash.remove();
+      document.body.style.animation='';
+    },800);
+  };
+
+  s.querySelector('#aleksBtn').onclick=()=>{
+    clearInterval(moveInterval);
+    clearScreens();
+    showOverlay(["even you know you were the eepy one 😴"],1200,()=>{
+      startChallenge3();
+    });
+  };
+}
+
+// ===== CHALLENGE 3 =====
+function startChallenge3(){
+  clearScreens();
+  let attempt=0;
+  let timerVal, holdTime, holding, timerInterval, holdInterval, sped, roundDone;
+
+  function startRound(freeMode){
+    roundDone=false;
+    timerVal=5.00;
+    holdTime=0;
+    holding=false;
+    sped=false;
+    clearScreens();
+
+    const s=showScreen(`
+      <h2>Give Hug 🤗</h2>
+      ${freeMode?'<p style="color:#fbbf24;font-weight:700;margin-bottom:8px">im waitingggggg</p>':''}
+      ${freeMode?'':'<div class="timer-display" id="timer">5.00</div>'}
+      <button class="hug-btn" id="hugBtn">🤗<br>HUG</button>
+      <div class="hug-progress"><div class="hug-fill" id="hugFill" style="width:0%"></div></div>
+      <p style="margin-top:12px;font-size:0.9rem;color:#888">Hold the button for 2 seconds!</p>
+    `);
+    addRestartBtn(s);
+
+    const timerEl=s.querySelector('#timer');
+    const fillEl=s.querySelector('#hugFill');
+    const hugBtn=s.querySelector('#hugBtn');
+
+    if(!freeMode){
+      timerInterval=setInterval(()=>{
+        if(roundDone)return;
+        let dec= sped ? 0.08 : 0.02;
+        timerVal-=dec;
+        if(timerVal<=0){
+          timerVal=0;
+          timerEl.textContent='0.00';
+          clearInterval(timerInterval);
+          clearInterval(holdInterval);
+          roundDone=true;
+          handleTimerEnd();
+          return;
+        }
+        timerEl.textContent=timerVal.toFixed(2);
+      },20);
+    }
+
+    function handleTimerEnd(){
+      attempt++;
+      if(attempt===1){
+        showOverlay(["fine dont give me hug 😤","ok since im generous ill let you try again"],1000,()=>{startRound(false);});
+      } else if(attempt===2){
+        showOverlay(["too slow again smh","I'll let you try ONE more time"],1000,()=>{startRound(false);});
+      } else {
+        // 3rd fail — free mode
+        showOverlay(["im waitingggggg"],1000,()=>{startRound(true);});
+      }
+    }
+
+    function handleWin(){
+      roundDone=true;
+      clearInterval(timerInterval);
+      clearInterval(holdInterval);
+      showOverlay(["see that wasn't so hard 🤗"],1200,()=>{
+        showLanding(true);
+      });
+    }
+
+    function startHold(){
+      if(roundDone)return;
+      holding=true;
+      if(!freeMode && attempt<2) sped=true;
+      holdInterval=setInterval(()=>{
+        if(!holding||roundDone)return;
+        holdTime+=0.02;
+        fillEl.style.width=(holdTime/2*100)+'%';
+        if(holdTime>=2){
+          clearInterval(holdInterval);
+          handleWin();
+        }
+      },20);
+    }
+
+    function stopHold(){
+      holding=false;
+      holdTime=0;
+      const f=document.querySelector('#hugFill');
+      if(f)f.style.width='0%';
+      sped=false;
+      clearInterval(holdInterval);
+    }
+
+    hugBtn.addEventListener('touchstart',e=>{e.preventDefault();startHold();},{passive:false});
+    hugBtn.addEventListener('touchend',stopHold);
+    hugBtn.addEventListener('mousedown',startHold);
+    hugBtn.addEventListener('mouseup',stopHold);
+  }
+  startRound(false);
+}
+
+// Start
+showLanding(false);
+</script>
+</body>
+</html>
