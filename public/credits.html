@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+<title>Credits — The Seed Chronicles</title>
+<link rel="stylesheet" href="css/shared.css">
+<link rel="stylesheet" href="css/chapter-themes.css">
+</head>
+<body data-theme="credits">
+<div id="app"></div>
+<script src="js/shared.js"></script>
+<script>
+// Sincere beat, same as Ch6/back-half-of-Ch7 — no taunts/jokes here (see docs/plan.txt).
+function showCredits(){
+  clearScreens();
+  const s = showScreen(`
+    <h2>Credits</h2>
+    <p>[TODO: dedication / inside jokes / final sincere message — see docs/plan.txt]</p>
+    <button class="btn" id="playAgainBtn">Play Again</button>
+  `);
+  addRestartBtn(s);
+  s.querySelector('#playAgainBtn').onclick = () => location.href = '/';
+}
+showCredits();
+</script>
+</body>
+</html>

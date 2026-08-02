@@ -1,0 +1,96 @@
+/* Per-chapter color palettes, selected via <body data-theme="..."> — see
+   docs/plan.txt's VISUAL SYSTEM section for the source palette notes.
+   shared.css's :root block already carries the meadow/title defaults;
+   these overrides only apply when a page opts in via data-theme. */
+
+body[data-theme="meadow"]{
+  --bg-top:#C9EFFF;
+  --bg-bottom:#8FD694;
+  --accent-sun:#FFD966;
+  --accent-leaf:#4CAF6B;
+  --text-dark:#1F3D2B;
+  --text-soft:#3E6B4E;
+  --panel:#ffffffcc;
+}
+
+body[data-theme="desert"]{
+  --bg-top:#F7E1C1;
+  --bg-bottom:#D98E4A;
+  --accent-sun:#FFB74D;
+  --accent-leaf:#B9622B;
+  --text-dark:#4A2A12;
+  --text-soft:#7A4A26;
+  --panel:#fff4e0cc;
+}
+
+body[data-theme="underworld"]{
+  --bg-top:#3a0d0d;
+  --bg-bottom:#120404;
+  --accent-sun:#FF5A36;
+  --accent-leaf:#8B1E1E;
+  --text-dark:#F5E6DC;
+  --text-soft:#E0B8A8;
+  --panel:#2a0a0acc;
+}
+
+body[data-theme="rescue"]{
+  --bg-top:#5B3E8E;
+  --bg-bottom:#2E1F4D;
+  --accent-sun:#F0C36B;
+  --accent-leaf:#C9A227;
+  --text-dark:#F3EAF9;
+  --text-soft:#D8C7EC;
+  --panel:#3a2a5ccc;
+}
+
+body[data-theme="training"]{
+  --bg-top:#E8792F;
+  --bg-bottom:#2B2320;
+  --accent-sun:#F2A65A;
+  --accent-leaf:#4A3F3A;
+  --text-dark:#2B2320;
+  --text-soft:#5A4A42;
+  --panel:#f0d8c0cc;
+}
+
+body[data-theme="kiss"]{
+  --bg-top:#FFE1EC;
+  --bg-bottom:#FF8FB1;
+  --accent-sun:#FFD1DC;
+  --accent-leaf:#FF5C8A;
+  --text-dark:#5A1030;
+  --text-soft:#8A3A5A;
+  --panel:#fff0f5cc;
+}
+
+body[data-theme="battle"]{
+  --bg-top:#7A1010;
+  --bg-bottom:#1A0505;
+  --accent-sun:#FF7043;
+  --accent-leaf:#B71C1C;
+  --text-dark:#FBEAEA;
+  --text-soft:#E8B8B8;
+  --panel:#2a0808cc;
+}
+
+/* Battle desaturates mid-chapter once Piper is struck down (see plan.txt) —
+   toggled by adding this class to <body> at that story beat. */
+body[data-theme="battle"].tone-sincere{
+  --bg-top:#e8e2e2;
+  --bg-bottom:#b8aeae;
+  --accent-sun:#f5d9d9;
+  --accent-leaf:#9a8a8a;
+  --text-dark:#2b2323;
+  --text-soft:#5a4c4c;
+  filter:saturate(0.35);
+}
+
+body[data-theme="credits"]{
+  --bg-top:#2c1f4a;
+  --bg-bottom:#120a24;
+  --accent-sun:#FFD966;
+  --accent-leaf:#FF5C8A;
+  --text-dark:#FBEAEA;
+  --text-soft:#D8C7EC;
+  --panel:#1f1533cc;
+}

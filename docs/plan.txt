@@ -1,0 +1,222 @@
+THE SEED CHRONICLES — GAME ARCHITECTURE PLAN
+================================================
+ 
+FORMAT: Multi-file plain static site (HTML/CSS/JS, no build step, no framework)
+         + Supabase (Postgres+Auth) backend + Vercel serverless functions.
+         See docs/architecture.md for the full technical architecture — this
+         file remains the content/screen-flow/mini-game spec, unchanged by
+         that shift.
+STRUCTURE: Screen-based state machine per page, same pattern as the Valentine's
+           Day site (clearScreens() / showScreen() / showOverlay() helpers,
+           reused/extended), now living in public/js/shared.js and shared
+           across pages instead of one file.
+
+BUILD FILES: public/index.html (title), public/chapter1.html...chapter7.html,
+             public/credits.html, public/login.html, public/signup.html
+             (was: single-file seed_chronicles.html, now retired — see
+             VERSION LOG 2.0.0)
+ 
+VERSIONING RULE (standing — applies to all future changes)
+------------------------------------------------
+- Current version: 1.0.0 (displayed in-game on Title Screen, bottom-right)
+- Bump the version number in seed_chronicles.html AND log it here in
+  plan.txt every time a change is made:
+    - PATCH (1.0.x) — small tweaks, copy edits, style/spacing fixes
+    - MINOR (1.x.0) — a new chapter or mini-game shipped
+    - MAJOR (x.0.0) — full game complete / major structural rework
+- Release year stays © 2026 unless work continues into a new year
+ 
+VERSION LOG
+------------------------------------------------
+- 1.0.0 — Title screen (Zelda BOTW style) shipped
+- 1.0.1 — Swapped text logo for user-provided illustrated logo image
+          (trimmed transparent PNG, embedded as base64), replacing the
+          italic "THE SEED CHRONICLES" text treatment in the logo-block
+- 1.0.2 — Fixed logo sizing/placement to match Zelda BOTW proportions
+          (was oversized at 70vw; now clamp(220px, 34vw, 380px), still
+          top-right aligned)
+- 1.0.3 — Tightened match to Zelda reference screenshot: logo moved closer
+          to top edge (padding 40px/48px -> 18px/32px), menu items switched
+          from uniform bold to Zelda's pattern (light weight/dimmer color
+          for secondary items, bold+bright+permanent arrow for the
+          top/primary "Play" item)
+- 1.0.4 — Moved logo/menu block closer to the right edge (padding
+          18px/32px -> 18px/14px)
+- 1.0.5 — Logo enlarged 1.25x (clamp(220px,34vw,380px) ->
+          clamp(275px,42.5vw,475px)); right-edge padding tightened to 8px
+          (was 14px)
+- 1.0.1 — Title font changed to Cormorant Garamond (italic serif)
+- 2.0.0 — MAJOR structural rework: migrated off the single self-contained
+          seed_chronicles.html file onto a multi-file plain static site
+          (public/index.html, login.html, signup.html, chapter1-7.html,
+          credits.html, css/shared.css, css/chapter-themes.css, js/shared.js,
+          js/supabase-client.js, js/auth.js, js/chapter1-7.js) plus a
+          Supabase Postgres+Auth backend and an api/signup.js Vercel
+          serverless function for invite-code-gated account creation. Title
+          screen ported over with real asset files (public/assets/*.webp)
+          replacing base64 data: URIs. Chapters 1-7 scaffolded as structural
+          stubs only (shell + TODO placeholder narration) — content still
+          [TODO] per below. See docs/architecture.md for the full backend
+          design and docs/schema.sql for the Supabase schema.
+
+STATUS
+------------------------------------------------
+[DONE]    Title Screen — REDESIGNED in Zelda BOTW style: full-bleed cinematic
+          background photo (the seed on the rock overlooking the vista,
+          user-provided image, now a real file at
+          public/assets/the_seed_title_background.webp), vignette overlay,
+          italic logo top-area, right-aligned italic menu (Play / Chapter
+          Select / Credits placeholders), version number + release year tag
+          bottom-right (Ver. 2.0.0 / © 2026 — bump version as chapters ship).
+          Old meadow-gradient/SVG-seed version replaced. Lives at
+          public/index.html as of the 2.0.0 rework.
+[SCAFFOLDED] Chapter 1 — Meadow / The Breeze — structural stub only
+          (public/chapter1.html + js/chapter1.js); narration/mini-game
+          content still [TODO]
+[SCAFFOLDED] Chapter 2 — Desert Trek — structural stub only
+          (public/chapter2.html + js/chapter2.js); narration/mini-game
+          content still [TODO]
+[SCAFFOLDED] Chapter 3 — Underworld Fall — structural stub only
+          (public/chapter3.html + js/chapter3.js); narration/mini-game
+          content still [TODO]
+[SCAFFOLDED] Chapter 4 — Pipy's Rescue / Drug Twist — structural stub only
+          (public/chapter4.html + js/chapter4.js); narration/mini-game
+          content still [TODO]
+[SCAFFOLDED] Chapter 5 — Training Montage — structural stub only
+          (public/chapter5.html + js/chapter5.js); narration/mini-game
+          content still [TODO]
+[SCAFFOLDED] Chapter 6 — The Kiss — structural stub only
+          (public/chapter6.html + js/chapter6.js); narration/mini-game
+          content still [TODO]
+[SCAFFOLDED] Chapter 7 — Final Battle — structural stub only
+          (public/chapter7.html + js/chapter7.js); narration/mini-game
+          content still [TODO]
+[SCAFFOLDED] Credits Scene — structural stub only (public/credits.html);
+          dedication/inside-joke content still [TODO]
+[DONE]    Login / Signup — invite-code-gated account creation via
+          api/signup.js + Supabase Auth (public/login.html, signup.html) —
+          needs a real Supabase project + docs/schema.sql run before it
+          actually works end-to-end
+ 
+------------------------------------------------
+SCREEN FLOW
+------------------------------------------------
+ 
+[TITLE SCREEN]
+  - Game title, seed character idle animation, ambient breeze bg
+  - "PLAY" button -> Chapter 1
+  - (optional) subtle looping animation, floating petals/leaves like the
+    heart-float bg in the Valentine's site
+ 
+    |
+    v
+ 
+[CHAPTER 1 — Meadow / The Breeze]
+  - Narration screen only, no mini-game
+  - Establishes seed + breeze relationship, whimsical tone
+  - Transition: breeze "blows" seed off-screen into Ch2
+ 
+    |
+    v
+ 
+[CHAPTER 2 — Desert Trek]
+  - Narration intro
+  - MINI-GAME: Heat-meter survival — tap water drop before heat maxes out
+  - Fail -> taunt message, retry (no dead end)
+  - Pass -> transition into the fall (crevice/underworld)
+ 
+    |
+    v
+ 
+[CHAPTER 3 — Underworld Fall]
+  - Narration intro (doom music beat, rock monsters)
+  - MINI-GAME: Countdown dodge — click crevice/escape before 5-4-3-2-1 hits 0
+  - Fail -> taunt, retry
+  - Pass -> Pipy's rescue cutscene
+ 
+    |
+    v
+ 
+[CHAPTER 4 — Pipy's Rescue / The Drug Twist]
+  - Narration (mysterious seed, the water, "wait there's two")
+  - MINI-GAME: Trick-button sequence — spot real Pipy vs decoy, blurry-vision
+    wobble effect on screen
+  - Fail -> taunt ("blurry" retry), retry
+  - Pass -> naming scene (Seedy Sam / Pipy dialogue, monospace script style)
+ 
+    |
+    v
+ 
+[CHAPTER 5 — Training Montage]
+  - Narration (obsidian knives, "folded like a lawn chair")
+  - MINI-GAME: Whack-a-mole sparring — hit targets, "seconds" = bonus points
+  - Fail -> taunt, retry
+  - Pass -> montage of weeks passing, bond growing
+ 
+    |
+    v
+ 
+[CHAPTER 6 — The Kiss]  *** SINCERE BEAT — tone drops all jokes ***
+  - Narration (Cupcake the dragon, "all or nothing", the kiss)
+  - MINI-GAME: Hold-button (heartbeat animation instead of timer,
+    mirrors the hug-hold challenge from Valentine's site)
+  - No fail state / no taunts here — this chapter stays gentle throughout
+  - Pass -> gear up, head into the skies on Cupcake
+ 
+    |
+    v
+ 
+[CHAPTER 7 — Final Battle]
+  - Narration intro (magma skies, rock hoard, doom music) — starts chaotic
+  - MINI-GAME: Word-unscramble battle (e.g. "LIGHT WORK NO REACTION")
+  - Mid-chapter tone shift: Piper gets struck -> screen desaturates,
+    jokes stop, sincere gut-punch beat
+  - Fail -> taunt (early rounds only, before the tone shift), retry
+  - Pass -> Sam's rampage, holds Piper, neurons arrive with healing potion
+  - Resolution: Piper saved, neurons warn of the giant hoard, goodbye line
+ 
+    |
+    v
+ 
+[CREDITS SCENE]
+  - Confetti / soft glow closing screen (like the Valentine's confetti screen)
+  - Scrolling or fade-in credits: story credits, "written by," inside-joke
+    dedications, a final sincere message to her
+  - Optional "Play Again" button -> back to Title Screen
+ 
+------------------------------------------------
+SHARED SYSTEMS / HELPERS
+------------------------------------------------
+- clearScreens() / showScreen() / showOverlay() — reused from Valentine's site
+- addRestartBtn() — persistent "return to start" option on every screen
+- Chapter transition system: fade/dissolve between biome color palettes
+  (breeze motif — seed gets "blown" from one world to the next)
+- Taunt/retry system: mini-games never dead-end, looping back with a
+  snarky message (consistent with established teasing-but-safe pattern)
+- Seed character evolves visually across chapters (leaf sprout -> sweaty ->
+  singed -> scarred-but-determined)
+- Tone flag per chapter: chaotic (default) vs sincere (Ch6, back half of Ch7,
+  Credits) — controls whether taunt/joke text appears
+ 
+------------------------------------------------
+VISUAL SYSTEM (see prior discussion for full palette)
+------------------------------------------------
+- Ch1 Meadow: soft greens/sky blue
+- Ch2 Desert: cracked terracotta / bleached sky
+- Ch3 Underworld: magma red/black
+- Ch4 Rescue: woozy purples, honey-gold accents
+- Ch5 Training: dusk orange/obsidian
+- Ch6 Kiss: warm pink/rose (echoes Valentine's site palette)
+- Ch7 Battle: magma red -> desaturates to soft white/pink at tone shift
+- Credits: confetti color burst
+- Type: rounded display face for narration, monospace for character dialogue
+  (SS: / P: script-style lines)
+ 
+------------------------------------------------
+OPEN QUESTIONS / NEXT STEPS
+------------------------------------------------
+- Confirm title screen title text/wording
+- Confirm credits content (dedication wording, inside jokes to include)
+- Decide whether Ch1 needs any interactivity or stays pure narration
+- Mock up seed character sprite/design before full build
+ 

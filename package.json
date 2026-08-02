@@ -1,0 +1,9 @@
+{
+  "name": "the-seed-chronicles",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The Seed Chronicles — invite-gated interactive story/game",
+  "dependencies": {
+    "@supabase/supabase-js": "^2"
+  }
+}

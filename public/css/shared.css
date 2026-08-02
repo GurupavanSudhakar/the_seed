@@ -1,0 +1,145 @@
+/* Shared base styles for The Seed Chronicles — reset, #app/.screen system,
+   ambient background, and overlay/restart-button chrome used across every page.
+   Per-chapter color palettes live in chapter-themes.css, applied via
+   <body data-theme="..."> — this file only sets sane defaults. */
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+:root{
+  /* Overridden per-chapter by chapter-themes.css; these are the Meadow/Title defaults. */
+  --bg-top:#C9EFFF;
+  --bg-bottom:#8FD694;
+  --accent-sun:#FFD966;
+  --accent-leaf:#4CAF6B;
+  --text-dark:#1F3D2B;
+  --text-soft:#3E6B4E;
+  --panel:#ffffffcc;
+}
+
+body{
+  font-family:'Baloo 2','Segoe UI',system-ui,-apple-system,sans-serif;
+  background:linear-gradient(180deg,var(--bg-top) 0%,var(--bg-bottom) 100%);
+  color:var(--text-dark);
+  min-height:100dvh;
+  overflow:hidden;
+  touch-action:manipulation;
+}
+
+#app{
+  width:100vw;height:100dvh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+
+/* ===== Ambient floating leaves/petals (createAmbient() in shared.js) ===== */
+.leaves-bg{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.leaf-float{
+  position:absolute;
+  font-size:22px;
+  opacity:0.35;
+  animation:driftAcross linear infinite;
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,0.1));
+}
+@keyframes driftAcross{
+  0%{transform:translate(-10vw,0) rotate(0deg);opacity:0}
+  10%{opacity:0.35}
+  50%{transform:translate(50vw,-6vh) rotate(180deg)}
+  90%{opacity:0.35}
+  100%{transform:translate(110vw,4vh) rotate(360deg);opacity:0}
+}
+
+.sun-glow{
+  position:fixed;
+  top:-80px;right:-80px;
+  width:220px;height:220px;
+  background:radial-gradient(circle,var(--accent-sun) 0%,transparent 70%);
+  opacity:0.7;
+  z-index:0;
+  pointer-events:none;
+  animation:pulseSun 4s ease-in-out infinite;
+}
+@keyframes pulseSun{
+  0%,100%{opacity:0.55;transform:scale(1)}
+  50%{opacity:0.8;transform:scale(1.08)}
+}
+
+.grass-strip{
+  position:absolute;bottom:0;left:0;width:100%;height:60px;
+  background:linear-gradient(180deg,transparent,rgba(44,120,70,0.25));
+  z-index:0;pointer-events:none;
+}
+
+/* ===== Screens (showScreen()/clearScreens() in shared.js) ===== */
+.screen{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;text-align:center;
+  z-index:1;opacity:0;pointer-events:none;
+  transition:opacity 0.5s;
+}
+.screen.active{opacity:1;pointer-events:auto}
+
+/* ===== Overlay (showOverlay() in shared.js) ===== */
+.overlay{
+  position:fixed;inset:0;
+  background:rgba(15,15,15,0.92);
+  z-index:50;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;text-align:center;
+}
+.overlay h2{color:#fff;font-size:1.5rem;margin-bottom:12px}
+.overlay p{color:#e8e8e8;font-size:1.1rem}
+
+/* ===== Restart button (addRestartBtn() in shared.js) ===== */
+.restart-btn{
+  position:absolute;top:16px;left:16px;
+  background:none;border:1px solid rgba(0,0,0,0.2);
+  color:var(--text-soft);
+  padding:8px 14px;border-radius:20px;font-size:0.8rem;
+  cursor:pointer;z-index:10;opacity:0.6;transition:opacity 0.2s;
+  font-family:inherit;
+}
+.restart-btn:active{opacity:1}
+
+/* ===== Generic button (chapter "Next" buttons, forms, etc.) ===== */
+.btn{
+  margin-top:24px;
+  padding:16px 40px;
+  border:none;border-radius:50px;
+  font-size:1.15rem;font-weight:700;
+  font-family:inherit;
+  cursor:pointer;
+  background:linear-gradient(135deg,#5FD37D,#2FA85A);
+  color:#fff;
+  box-shadow:0 6px 0 #1f7a3f, 0 10px 20px rgba(0,0,0,0.18);
+  transition:transform 0.12s, box-shadow 0.12s;
+  -webkit-user-select:none;user-select:none;
+}
+.btn:active{
+  transform:translateY(4px);
+  box-shadow:0 2px 0 #1f7a3f, 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* ===== Plain utility forms (login.html / signup.html) ===== */
+.auth-form{
+  display:flex;flex-direction:column;gap:14px;
+  width:min(320px, 84vw);
+  z-index:2;
+}
+.auth-form input{
+  padding:14px 16px;
+  border-radius:14px;
+  border:1px solid rgba(0,0,0,0.15);
+  background:var(--panel);
+  color:var(--text-dark);
+  font-size:1rem;font-family:inherit;
+}
+.auth-form .error{
+  color:#c0392b;
+  font-size:0.9rem;
+  min-height:1.2em;
+}
+.auth-form .switch-link{
+  margin-top:8px;font-size:0.9rem;color:var(--text-soft);
+}
+.auth-form .switch-link a{color:var(--accent-leaf);font-weight:700;text-decoration:none}

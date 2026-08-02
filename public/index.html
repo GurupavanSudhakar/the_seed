@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+<title>🌱 The Seed Chronicles 🌱</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/shared.css">
+<link rel="stylesheet" href="css/chapter-themes.css">
+<style>
+/* Title-screen-only rules — single-page use, not worth sharing into shared.css. */
+
+.title-bg{
+  position:absolute;inset:0;
+  background-image:url('assets/the_seed_title_background.webp');
+  background-size:cover;
+  background-position:center 40%;
+  z-index:0;
+}
+.title-vignette{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.05) 40%,rgba(0,0,0,0.35) 100%),
+             linear-gradient(90deg,rgba(0,0,0,0.25) 0%,transparent 35%);
+  z-index:1;
+}
+.title-content{
+  position:relative;
+  z-index:2;
+  width:100%;height:100%;
+  display:flex;flex-direction:column;
+  align-items:flex-end;
+  justify-content:flex-start;
+  padding:18px 8px;
+}
+.logo-block{
+  text-align:right;
+  margin-top:0;
+}
+.logo-block .game-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:3rem;
+  font-weight:700;
+  color:#fdf6e3;
+  text-shadow:0 2px 6px rgba(0,0,0,0.7), 0 0 24px rgba(0,0,0,0.4);
+  letter-spacing:1px;
+  line-height:1.1;
+  font-style:italic;
+}
+.logo-block .game-title .accent{
+  color:#FFD966;
+}
+.menu-block{
+  margin-top:auto;
+  margin-bottom:40px;
+  text-align:right;
+  display:flex;flex-direction:column;
+  gap:14px;
+  align-items:flex-end;
+}
+.menu-item{
+  font-size:1.1rem;
+  font-style:italic;
+  font-weight:400;
+  color:#cdc9bd;
+  text-shadow:0 2px 6px rgba(0,0,0,0.8);
+  cursor:pointer;
+  background:none;border:none;
+  font-family:inherit;
+  display:flex;align-items:center;gap:10px;
+  transition:color 0.2s, transform 0.15s;
+  -webkit-user-select:none;user-select:none;
+}
+.menu-item .arrow{
+  opacity:0;
+  transition:opacity 0.2s, transform 0.2s;
+  transform:translateX(4px);
+}
+.menu-item:hover .arrow, .menu-item:active .arrow{
+  opacity:1;
+  transform:translateX(0);
+}
+.menu-item:hover, .menu-item:active{
+  color:#FFD966;
+}
+.menu-item.primary{
+  font-size:1.2rem;
+  font-weight:600;
+  color:#fdf6e3;
+}
+.menu-item.primary .arrow{
+  opacity:1;
+  transform:translateX(0);
+}
+.version-tag{
+  position:absolute;
+  bottom:16px;right:20px;
+  z-index:2;
+  font-size:0.75rem;
+  color:#cfcabb;
+  opacity:0.8;
+  text-align:right;
+  text-shadow:0 1px 3px rgba(0,0,0,0.8);
+  line-height:1.5;
+}
+.logo-image{
+  width:clamp(275px, 42.5vw, 475px);
+  height:auto;
+  filter:drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+}
+</style>
+</head>
+<body data-theme="meadow">
+<div id="app"></div>
+<script src="js/shared.js"></script>
+<script>
+// ===== Title Screen (Zelda BOTW style) =====
+function showTitleScreen(){
+  clearScreens();
+  const s = showScreen(`
+    <div class="title-bg"></div>
+    <div class="title-vignette"></div>
+    <div class="title-content">
+      <div class="logo-block">
+        <img class="logo-image" src="assets/the_seed_title_logo.webp" alt="The Seed Chronicles logo">
+      </div>
+      <div class="menu-block">
+        <button class="menu-item primary" id="playBtn"><span class="arrow">➤</span> Play</button>
+        <button class="menu-item" id="chapterSelectBtn"><span class="arrow">➤</span> Chapter Select</button>
+        <button class="menu-item" id="creditsBtn"><span class="arrow">➤</span> Credits</button>
+      </div>
+    </div>
+    <div class="version-tag">Ver. 2.0.0<br>&copy; 2026</div>
+  `, 'no-fade-bg');
+
+  s.querySelector('#playBtn').onclick = () => {
+    location.href = '/chapter1';
+  };
+  s.querySelector('#chapterSelectBtn').onclick = () => {
+    // Placeholder: chapter select to be built later
+  };
+  s.querySelector('#creditsBtn').onclick = () => {
+    location.href = '/credits';
+  };
+}
+
+// Start
+showTitleScreen();
+</script>
+</body>
+</html>
