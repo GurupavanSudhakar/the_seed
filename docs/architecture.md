@@ -35,12 +35,17 @@ This is also an explicit learning project — prefer clear, understandable piece
     auth.js             — login/signup form handling, calls /api/signup for invite redemption
     chapter1.js ... chapter7.js — per-chapter narration + mini-game logic
   /assets
-    (real image files — no more base64 inlining)
+    /title, /ch1-meadow ... /ch7-battle, /credits, /shared
+    (real image files, one subfolder per screen — no more base64 inlining)
 /api
   signup.js            — serverless function: validate + consume invite code, create user
 ```
 
 Chapters stay data-driven off `docs/The_Seed_Chronicles.md` and the chapter specs in `docs/plan.txt` — this doc only changes *where the code lives and how progress/accounts work*, not the story/mini-game content plan.
+
+### Asset library convention
+
+`public/assets/` is organized one subfolder per screen (`title/`, `ch1-meadow/` ... `ch7-battle/`, `credits/`) rather than one flat folder, since 7 chapters' worth of backgrounds/character-sprite states/UI art would get unwieldy otherwise. `shared/` holds cross-chapter reusable art (e.g. the seed character sprite states as it evolves across the story, per `plan.txt`'s "seed evolves visually across chapters" note) rather than duplicating the same asset into every chapter folder that uses it. Empty folders carry a `.gitkeep` so the structure is visible in the repo before art exists for that chapter.
 
 ## Data model (Supabase / Postgres)
 
