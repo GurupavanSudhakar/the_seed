@@ -1,5 +1,8 @@
 .claude
 CLAUDE.md
+.agents
+.mcp.json
+skills-lock.json
 
 # Dependencies
 node_modules
