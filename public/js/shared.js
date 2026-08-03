@@ -8,13 +8,26 @@
 const $ = id => document.getElementById(id);
 const app = $('app');
 
-// Single flag controlling whether the game is publicly revealed yet.
-// Flip to false + redeploy on launch day. Every page except /signup itself
-// redirects there while locked, since it's the only link ever shared.
-const LOCKED = true;
-if (LOCKED && location.pathname !== '/signup' && location.pathname !== '/signup.html') {
-  location.replace('/signup');
-}
+// Whether the game is publicly revealed yet — a runtime toggle (site_config.locked
+// in Supabase, flippable from /admin) rather than a hardcoded constant, so launch
+// day doesn't require a code edit + redeploy. Every page except /signup, /login,
+// and /admin redirects to /signup while locked, since /signup is the only link
+// ever shared, and /login + /admin need to stay reachable regardless of lock state.
+// `lockReady` resolves once LOCKED reflects the real value — any page whose own
+// bootstrap branches on LOCKED must `await lockReady` first (see index.html).
+let LOCKED = true; // fail-safe default: locked until /api/settings says otherwise
+const EXEMPT_PATHS = ['/signup', '/signup.html', '/login', '/login.html', '/admin', '/admin.html'];
+const lockReady = (async () => {
+  try {
+    const res = await fetch('/api/settings');
+    LOCKED = (await res.json()).locked;
+  } catch (e) {
+    // stay locked on error
+  }
+  if (LOCKED && !EXEMPT_PATHS.includes(location.pathname)) {
+    location.replace('/signup');
+  }
+})();
 
 function clearScreens(){
   app.querySelectorAll('.screen,.overlay').forEach(e=>e.remove());

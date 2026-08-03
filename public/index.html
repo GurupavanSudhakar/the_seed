@@ -145,18 +145,18 @@ function showTitleScreen(){
   };
 }
 
-// Start — shared.js already redirected to /signup if LOCKED, so this only
-// runs in the unlocked case: gate the title screen on an active session.
-if (!LOCKED) {
-  (async () => {
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (!session) {
-      location.replace('/login');
-      return;
-    }
-    showTitleScreen();
-  })();
-}
+// Start — wait for shared.js's async lock check (it redirects to /signup if
+// LOCKED), then gate the title screen on an active session.
+(async () => {
+  await lockReady;
+  if (LOCKED) return;
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (!session) {
+    location.replace('/login');
+    return;
+  }
+  showTitleScreen();
+})();
 </script>
 </body>
 </html>

@@ -40,11 +40,12 @@ grant select, insert, update on game_progress to authenticated;
 grant select, insert, update on game_progress to service_role;
 
 -- RLS: invite_codes — enabled, NO client-facing policies.
--- Only the admin client (secret key, server-side, in api/signup.js) can touch
--- this table — it runs as service_role, which still needs its own explicit
--- grant despite bypassing RLS (see note above).
+-- Only the admin client (secret key, server-side, in api/signup.js and
+-- api/admin/*.js) can touch this table — it runs as service_role, which still
+-- needs its own explicit grant despite bypassing RLS (see note above).
+-- insert/delete are for api/admin/generate-invites.js and revoke-invite.js.
 alter table invite_codes enable row level security;
-grant select, update on invite_codes to service_role;
+grant select, insert, update, delete on invite_codes to service_role;
 
 -- Seed exactly 3 invite codes (2 for the couple + 1 spare).
 -- Placeholder codes — regenerate/edit these before real use.
@@ -52,3 +53,16 @@ insert into invite_codes (code) values
   ('SEED-ALPHA-0001'),
   ('SEED-ALPHA-0002'),
   ('SEED-ALPHA-SPARE');
+
+-- site_config — single-row runtime toggle for the pre-launch LOCKED flag
+-- (public/js/shared.js), so it can be flipped from the admin panel
+-- (api/admin/toggle-lock.js) without a code edit + redeploy.
+-- No client-facing policy — api/settings.js reads it via the admin client;
+-- the boolean it exposes isn't sensitive, only the write path needs gating.
+create table site_config (
+  id boolean primary key default true,
+  locked boolean not null default true
+);
+insert into site_config (id, locked) values (true, true);
+alter table site_config enable row level security;
+grant select, update on site_config to service_role;

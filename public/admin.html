@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+<title>Admin — The Seed Chronicles</title>
+<link rel="stylesheet" href="css/shared.css">
+<link rel="stylesheet" href="css/chapter-themes.css">
+<style>
+/* Admin-panel-only rules — single-page use, not worth sharing into shared.css. */
+
+.admin-panel{
+  width:100%;height:100%;
+  overflow-y:auto;
+  display:flex;flex-direction:column;
+  align-items:stretch;
+  gap:28px;
+  padding:24px;
+  max-width:900px;
+}
+
+.admin-title{
+  font-size:1.6rem;font-weight:700;
+  color:var(--accent-sun);
+  text-align:left;
+}
+
+.admin-section h2{
+  font-size:1.1rem;
+  margin-bottom:10px;
+  color:var(--text-dark);
+  text-align:left;
+}
+
+.lock-row{
+  display:flex;align-items:center;gap:12px;
+  background:var(--panel);
+  border-radius:12px;
+  padding:14px 18px;
+}
+.lock-row label{ font-size:0.95rem; cursor:pointer; user-select:none; }
+.lock-row input[type="checkbox"]{ width:20px;height:20px; }
+
+.admin-table{
+  width:100%;
+  border-collapse:collapse;
+  background:var(--panel);
+  border-radius:12px;
+  overflow:hidden;
+  font-size:0.85rem;
+}
+.admin-table th, .admin-table td{
+  padding:10px 12px;
+  text-align:left;
+  border-bottom:1px solid rgba(0,0,0,0.08);
+  white-space:nowrap;
+}
+.admin-table th{ font-weight:700; opacity:0.75; }
+.admin-table-wrap{ overflow-x:auto; border-radius:12px; }
+
+.mini-btn{
+  padding:6px 12px;
+  border:none;border-radius:8px;
+  font-family:inherit;font-size:0.8rem;font-weight:700;
+  cursor:pointer;
+  margin-right:6px;
+}
+.mini-btn.danger{ background:#e0554a; color:#fff; }
+.mini-btn.neutral{ background:var(--accent-leaf); color:#fff; }
+
+.generate-form{
+  display:flex;gap:10px;align-items:center;margin-bottom:14px;
+}
+.generate-form input{
+  width:70px;padding:8px 10px;border-radius:8px;
+  border:1px solid rgba(0,0,0,0.15);
+  font-family:inherit;font-size:0.9rem;
+}
+
+.admin-panel .auth-form{ align-self:center; margin-top:15vh; }
+.admin-panel .admin-title{ align-self:center; }
+</style>
+</head>
+<body data-theme="login">
+<div id="app"></div>
+<script src="js/shared.js"></script>
+<script src="js/admin.js"></script>
+<script>
+initAdminPage();
+</script>
+</body>
+</html>
