@@ -9,4 +9,4 @@ function showChapter3(){
   addRestartBtn(s);
   s.querySelector('#nextBtn').onclick = () => location.href = '/chapter4';
 }
-showChapter3();
+requireSession(showChapter3);

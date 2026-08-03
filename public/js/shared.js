@@ -29,6 +29,23 @@ const lockReady = (async () => {
   }
 })();
 
+// Gate a page's content behind an active Supabase session — used by every
+// page except title/login/signup/admin (index.html does its own equivalent
+// check since it also branches on LOCKED for the pre-title-screen case).
+// Callers must load the Supabase UMD script + supabase-client.js before this
+// runs. No-ops (returns without calling startFn) if shared.js already
+// redirected for LOCKED, or if there's no session — redirects to /login.
+async function requireSession(startFn) {
+  await lockReady;
+  if (LOCKED) return;
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (!session) {
+    location.replace('/login');
+    return;
+  }
+  startFn();
+}
+
 function clearScreens(){
   app.querySelectorAll('.screen,.overlay').forEach(e=>e.remove());
 }

@@ -11,4 +11,4 @@ function showChapter7(){
   addRestartBtn(s);
   s.querySelector('#nextBtn').onclick = () => location.href = '/credits';
 }
-showChapter7();
+requireSession(showChapter7);

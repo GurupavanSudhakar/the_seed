@@ -9,7 +9,9 @@
 </head>
 <body data-theme="credits">
 <div id="app"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="js/shared.js"></script>
+<script src="js/supabase-client.js"></script>
 <script>
 // Sincere beat, same as Ch6/back-half-of-Ch7 — no taunts/jokes here (see docs/plan.txt).
 function showCredits(){
@@ -22,7 +24,7 @@ function showCredits(){
   addRestartBtn(s);
   s.querySelector('#playAgainBtn').onclick = () => location.href = '/';
 }
-showCredits();
+requireSession(showCredits);
 </script>
 </body>
 </html>
