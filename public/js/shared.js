@@ -10,13 +10,14 @@ const app = $('app');
 
 // Whether the game is publicly revealed yet — a runtime toggle (site_config.locked
 // in Supabase, flippable from /admin) rather than a hardcoded constant, so launch
-// day doesn't require a code edit + redeploy. Every page except /signup, /login,
-// and /admin redirects to /signup while locked, since /signup is the only link
-// ever shared, and /login + /admin need to stay reachable regardless of lock state.
+// day doesn't require a code edit + redeploy. Every page except /signup and /admin
+// redirects to /signup while locked, since /signup is the only link ever shared,
+// and /admin needs to stay reachable regardless of lock state (it's gated by its
+// own separate admin password, not a player Supabase session — see admin.js).
 // `lockReady` resolves once LOCKED reflects the real value — any page whose own
 // bootstrap branches on LOCKED must `await lockReady` first (see index.html).
 let LOCKED = true; // fail-safe default: locked until /api/settings says otherwise
-const EXEMPT_PATHS = ['/signup', '/signup.html', '/login', '/login.html', '/admin', '/admin.html'];
+const EXEMPT_PATHS = ['/signup', '/signup.html', '/admin', '/admin.html'];
 const lockReady = (async () => {
   try {
     const res = await fetch('/api/settings');
