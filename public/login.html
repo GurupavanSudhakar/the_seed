@@ -75,6 +75,23 @@
 .login-submit:hover{ box-shadow:0 6px 16px rgba(0,0,0,0.5), 0 0 14px rgba(240,199,85,0.6); }
 .login-submit:active{ transform:scale(0.96); box-shadow:0 6px 16px rgba(0,0,0,0.5), 0 0 18px rgba(240,199,85,0.75); }
 
+.login-signup-link{
+  width:min(300px, 78vw);
+  padding:10px 18px;
+  border:none;
+  background:none;
+  cursor:pointer;
+  font-family:inherit;
+  font-weight:600;
+  font-size:0.9rem;
+  color:rgba(245,233,200,0.75);
+  text-align:center;
+  text-decoration:underline;
+  text-underline-offset:3px;
+  -webkit-user-select:none;user-select:none;
+}
+.login-signup-link:hover{ color:var(--accent-sun); }
+
 .login-form .error{
   position:absolute;
   top:100%;left:0;right:0;
@@ -102,9 +119,11 @@ function showLoginScreen(){
       <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
       <div class="error" id="loginError"></div>
       <button class="login-submit" type="submit">AWAKEN</button>
+      <button class="login-signup-link" type="button" id="signupLinkBtn">Haven't signed up yet?</button>
     </form>
   `);
   wireLoginForm();
+  $('signupLinkBtn').onclick = () => location.href = '/signup';
 }
 showLoginScreen();
 </script>
