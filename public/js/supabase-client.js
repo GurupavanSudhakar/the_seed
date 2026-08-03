@@ -1,17 +1,18 @@
 // Supabase client + save/load helpers.
 //
-// SUPABASE_URL/SUPABASE_ANON_KEY are meant to be public (Row Level Security is
-// what actually protects data, not secrecy of these values) — see docs/architecture.md.
-// Placeholders below until a real Supabase project exists; swap in the real
-// values from your project's API settings once it's created.
+// SUPABASE_URL/SUPABASE_PUBLISHABLE_KEY are meant to be public (Row Level
+// Security is what actually protects data, not secrecy of these values) —
+// see docs/architecture.md. The publishable key is the new-style client key
+// (sb_publishable_...), the direct successor to the legacy anon JWT key —
+// see the @supabase/server skill notes in api/signup.js.
 //
 // Requires the Supabase UMD build loaded first via <script> CDN tag, e.g.:
 //   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
-const SUPABASE_URL = 'https://your-project-ref.supabase.co';
-const SUPABASE_ANON_KEY = 'your-anon-public-key-here';
+const SUPABASE_URL = 'https://sqbudlzpmrppwftcuakw.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_YLCJwNxqZ8gH73UapKysJg_uOoHEA99';
 
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
 // Returns { current_chapter, chapter_state } for the logged-in user, or null if
 // there's no session or no saved row yet (caller should treat null as "start at Chapter 1").

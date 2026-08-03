@@ -29,9 +29,22 @@ create policy "insert own progress" on game_progress
 create policy "update own progress" on game_progress
   for update using (auth.uid() = user_id);
 
--- RLS: invite_codes — enabled, NO client policies at all.
--- Only the service-role key (server-side, in /api/signup.js) can touch this table.
+-- Supabase requires an explicit GRANT in addition to RLS policies — tables
+-- created via the SQL editor don't get the default role grants that tables
+-- made through the Table Editor UI get automatically. Without this, PostgREST
+-- returns "permission denied" before RLS is even evaluated. The `authenticated`
+-- role is logged-in users; RLS policies above still scope them to their own row.
+-- `service_role` (used by api/signup.js's admin client) bypasses RLS but NOT
+-- table-level grants, so it needs its own explicit grant too.
+grant select, insert, update on game_progress to authenticated;
+grant select, insert, update on game_progress to service_role;
+
+-- RLS: invite_codes — enabled, NO client-facing policies.
+-- Only the admin client (secret key, server-side, in api/signup.js) can touch
+-- this table — it runs as service_role, which still needs its own explicit
+-- grant despite bypassing RLS (see note above).
 alter table invite_codes enable row level security;
+grant select, update on invite_codes to service_role;
 
 -- Seed exactly 3 invite codes (2 for the couple + 1 spare).
 -- Placeholder codes — regenerate/edit these before real use.

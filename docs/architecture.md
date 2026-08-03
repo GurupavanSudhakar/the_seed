@@ -68,15 +68,15 @@ create table game_progress (
 ```
 
 **Row Level Security (RLS)**:
-- `game_progress`: enabled, with a policy so a user can only `select`/`insert`/`update` the row where `user_id = auth.uid()`. This is the actual mechanism that makes "per-account, isolated progress" hold — not app code.
-- `invite_codes`: RLS enabled with **no** client-facing policies at all — the table is only ever touched by the serverless function using the Supabase **service role key** (server-side secret, never shipped to the browser). The anon/client key can't read or write it.
+- `game_progress`: enabled, with a policy so a user can only `select`/`insert`/`update` the row where `user_id = auth.uid()`. This is the actual mechanism that makes "per-account, isolated progress" hold — not app code. RLS alone isn't enough, though — Supabase also requires an explicit `grant select, insert, update on game_progress to authenticated` (tables created via the SQL editor don't get the default role grants that Table-Editor-created tables get automatically); without it PostgREST returns "permission denied" before RLS is even evaluated. See `docs/schema.sql`.
+- `invite_codes`: RLS enabled with **no** client-facing policies and **no** grants at all — the table is only ever touched by the serverless function using an admin client (secret key, server-side only, never shipped to the browser). The publishable/client key can't read or write it.
 
 ## Account creation flow (invite codes)
 
 Real signup can't be a plain client-side `supabase.auth.signUp()` call, because nothing would stop someone from calling that directly and skipping the invite check. Instead:
 
 1. Client (`signup.html` / `auth.js`) posts `{ email, password, inviteCode }` to `/api/signup` (Vercel serverless function).
-2. The function, using the Supabase **service role key** (env var, server-only), atomically claims the code:
+2. The function, using `createAdminClient()` from `@supabase/server/core` (resolves `SUPABASE_URL`/`SUPABASE_SECRET_KEY` from env automatically — server-only, never sent to the browser), atomically claims the code:
    ```sql
    update invite_codes set used = true
    where code = $1 and used = false
@@ -95,8 +95,11 @@ Login (existing users) is a normal client-side Supabase Auth call — no serverl
 
 ## Environment variables
 
-- `SUPABASE_URL`, `SUPABASE_ANON_KEY` — public, safe to embed client-side (RLS is what actually protects data, not secrecy of these).
-- `SUPABASE_SERVICE_ROLE_KEY` — secret, set only as a Vercel serverless environment variable, never committed or sent to the browser. Used exclusively inside `/api/signup.js`.
+Uses Supabase's newer key scheme (`sb_publishable_...`/`sb_secret_...`) via the `@supabase/server` package rather than the legacy `anon`/`service_role` JWT keys — see the `supabase-server` skill (`.agents/skills/supabase-server/SKILL.md`) for why and how it's used server-side.
+
+- `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` — public, safe to embed client-side (RLS is what actually protects data, not secrecy of these). Hardcoded directly in `public/js/supabase-client.js`.
+- `SUPABASE_SECRET_KEY` — secret, set only as a Vercel serverless environment variable, never committed or sent to the browser. Resolved automatically by `createAdminClient()` inside `/api/signup.js`.
+- `SUPABASE_JWKS_URL` — used for verifying user JWTs server-side if a future endpoint needs `auth: 'user'` mode; not currently used by `/api/signup.js` since it only needs admin access, not to verify an inbound user session.
 
 ## Open questions / next steps
 

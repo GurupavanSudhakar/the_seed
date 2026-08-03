@@ -2,10 +2,16 @@
 //
 // Real signup can't happen client-side (nothing would stop someone from calling
 // supabase.auth.signUp() directly and skipping the invite check), so this function
-// uses the Supabase service role key (server-only secret, never sent to the browser)
-// to atomically claim an invite code before creating the account. See docs/architecture.md.
+// uses an admin client (server-only secret key, never sent to the browser) to
+// atomically claim an invite code before creating the account. See docs/architecture.md.
+//
+// This endpoint has to stay callable by anyone with an invite code (there's no
+// user session yet at signup time), so it doesn't go through @supabase/server's
+// withSupabase/auth-mode wrapper — it just uses createAdminClient() directly for
+// the elevated queries, per that package's guidance for admin-only access with
+// no specific inbound auth mode required.
 
-const { createClient } = require('@supabase/supabase-js');
+const { createAdminClient } = require('@supabase/server/core');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -23,10 +29,7 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const admin = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  );
+  const admin = createAdminClient();
 
   // 1. Atomically claim the invite code — zero rows back means it was already
   //    used or never existed. This has to happen before any account is created.

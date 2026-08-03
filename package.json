@@ -4,6 +4,7 @@
   "private": true,
   "description": "The Seed Chronicles — invite-gated interactive story/game",
   "dependencies": {
+    "@supabase/server": "^1.4.1",
     "@supabase/supabase-js": "^2"
   }
 }
