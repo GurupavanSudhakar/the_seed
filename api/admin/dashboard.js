@@ -14,16 +14,17 @@ export default async function handler(req, res) {
 
   const admin = createAdminClient();
 
-  const [{ data: listData, error: listErr }, { data: progressRows, error: progressErr }, { data: inviteRows, error: inviteErr }, { data: configRow, error: configErr }] =
+  const [{ data: listData, error: listErr }, { data: progressRows, error: progressErr }, { data: inviteRows, error: inviteErr }, { data: configRow, error: configErr }, { data: pageRows, error: pageErr }] =
     await Promise.all([
       admin.auth.admin.listUsers(),
       admin.from('game_progress').select('*'),
       admin.from('invite_codes').select('*').order('created_at'),
       admin.from('site_config').select('locked').eq('id', true).maybeSingle(),
+      admin.from('page_locks').select('page, locked').order('page'),
     ]);
 
-  if (listErr || progressErr || inviteErr || configErr) {
-    console.error('dashboard load failed:', listErr || progressErr || inviteErr || configErr);
+  if (listErr || progressErr || inviteErr || configErr || pageErr) {
+    console.error('dashboard load failed:', listErr || progressErr || inviteErr || configErr || pageErr);
     res.status(500).json({ error: 'Server error loading dashboard' });
     return;
   }
@@ -54,5 +55,5 @@ export default async function handler(req, res) {
     created_at: i.created_at,
   }));
 
-  res.status(200).json({ users, invites, locked: configRow ? configRow.locked : true });
+  res.status(200).json({ users, invites, locked: configRow ? configRow.locked : true, pageLocks: pageRows || [] });
 }

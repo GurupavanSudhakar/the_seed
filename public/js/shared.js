@@ -16,12 +16,22 @@ const app = $('app');
 // own separate admin password, not a player Supabase session — see admin.js).
 // `lockReady` resolves once LOCKED reflects the real value — any page whose own
 // bootstrap branches on LOCKED must `await lockReady` first (see index.html).
+//
+// PAGE_LOCKS holds the granular, per-page locks (page_locks table) — these are
+// subordinate to LOCKED: they're only meaningful (and only editable from
+// /admin) once LOCKED is false. When a page's own entry in PAGE_LOCKS is true,
+// showLockedScreen() takes over instead of a redirect — see isPageLocked()/
+// requireSession() below. /login, /signup, /admin have no PAGE_LOCKS entry and
+// can never be granularly locked.
 let LOCKED = true; // fail-safe default: locked until /api/settings says otherwise
+let PAGE_LOCKS = {};
 const EXEMPT_PATHS = ['/signup', '/signup.html', '/admin', '/admin.html'];
 const lockReady = (async () => {
   try {
     const res = await fetch('/api/settings');
-    LOCKED = (await res.json()).locked;
+    const data = await res.json();
+    LOCKED = data.locked;
+    PAGE_LOCKS = data.pageLocks || {};
   } catch (e) {
     // stay locked on error
   }
@@ -29,6 +39,26 @@ const lockReady = (async () => {
     location.replace('/signup');
   }
 })();
+
+function isPageLocked(path) {
+  return !LOCKED && PAGE_LOCKS[path] === true;
+}
+
+// Full-screen "PAGE LOCKED" takeover, styled after docs/valentine.html's
+// "WRONG ANSWER" flash. The button falls back through the only pages
+// guaranteed reachable: the title screen if it isn't itself granularly
+// locked, otherwise /login (which, like /signup, can never be locked).
+function showLockedScreen() {
+  clearScreens();
+  const dest = isPageLocked('/') ? '/login' : '/';
+  const s = showScreen(`
+    <div class="locked-overlay">
+      <span class="locked-text">PAGE LOCKED</span>
+      <button class="btn" id="lockedReturnBtn">Return to accessible page</button>
+    </div>
+  `, 'locked-screen');
+  s.querySelector('#lockedReturnBtn').onclick = () => location.href = dest;
+}
 
 // Gate a page's content behind an active Supabase session — used by every
 // page except title/login/signup/admin (index.html does its own equivalent
@@ -39,6 +69,10 @@ const lockReady = (async () => {
 async function requireSession(startFn) {
   await lockReady;
   if (LOCKED) return;
+  if (isPageLocked(location.pathname)) {
+    showLockedScreen();
+    return;
+  }
   const { data: { session } } = await supabaseClient.auth.getSession();
   if (!session) {
     location.replace('/login');

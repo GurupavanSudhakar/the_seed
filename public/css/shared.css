@@ -120,6 +120,26 @@ body{
   box-shadow:0 2px 0 #1f7a3f, 0 4px 10px rgba(0,0,0,0.15);
 }
 
+/* ===== Locked page takeover (showLockedScreen() in shared.js) =====
+   Adapted from docs/valentine.html's "WRONG ANSWER" flash/shake, but held
+   static (not auto-fading) since this is a page state, not a momentary miss. */
+.locked-overlay{
+  position:fixed;inset:0;
+  background:#B3261E;
+  z-index:100;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:28px;
+  animation:lockedFlashIn 0.5s ease-out;
+}
+.locked-overlay .locked-text{
+  font-size:2.5rem;font-weight:900;color:#fff;
+  letter-spacing:2px;
+  text-shadow:0 0 30px rgba(0,0,0,0.6);
+  animation:lockedTextIn 0.5s ease-out;
+}
+@keyframes lockedFlashIn{0%{opacity:0}100%{opacity:1}}
+@keyframes lockedTextIn{0%{transform:scale(3);opacity:0}100%{transform:scale(1);opacity:1}}
+
 /* ===== Plain utility forms (login.html / signup.html) ===== */
 .auth-form{
   display:flex;flex-direction:column;gap:14px;

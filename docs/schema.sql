@@ -66,3 +66,31 @@ create table site_config (
 insert into site_config (id, locked) values (true, true);
 alter table site_config enable row level security;
 grant select, update on site_config to service_role;
+
+-- page_locks — granular per-page lock switches, independent of and subordinate
+-- to site_config.locked. site_config.locked (above) always wins: while it's
+-- true, every page redirects to /signup regardless of page_locks. Once it's
+-- false, each page checks its own row here. /login and /signup are
+-- intentionally never rows in this table — they must always stay reachable
+-- so a locked-out player can still get to a working page. /admin also has no
+-- row — it's gated by its own password (see api/_lib/require-admin.js), not
+-- by this table. Same no-client-policy/service_role-grant pattern as
+-- site_config: api/settings.js reads it, api/admin/toggle-page-lock.js writes it.
+create table page_locks (
+  page text primary key,
+  locked boolean not null default false
+);
+alter table page_locks enable row level security;
+grant select, update on page_locks to service_role;
+
+insert into page_locks (page, locked) values
+  ('/', false),
+  ('/chapter1', false),
+  ('/chapter2', false),
+  ('/chapter3', false),
+  ('/chapter4', false),
+  ('/chapter5', false),
+  ('/chapter6', false),
+  ('/chapter7', false),
+  ('/credits', false),
+  ('/story-source', false);

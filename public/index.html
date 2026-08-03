@@ -142,6 +142,10 @@ function showTitleScreen(){
 (async () => {
   await lockReady;
   if (LOCKED) return;
+  if (isPageLocked('/')) {
+    showLockedScreen();
+    return;
+  }
   const { data: { session } } = await supabaseClient.auth.getSession();
   if (!session) {
     location.replace('/login');

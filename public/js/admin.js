@@ -14,6 +14,19 @@ function fmtDate(iso) {
   return new Date(iso).toLocaleString();
 }
 
+const PAGE_LABELS = {
+  '/': 'Title Screen',
+  '/chapter1': 'Chapter 1',
+  '/chapter2': 'Chapter 2',
+  '/chapter3': 'Chapter 3',
+  '/chapter4': 'Chapter 4',
+  '/chapter5': 'Chapter 5',
+  '/chapter6': 'Chapter 6',
+  '/chapter7': 'Chapter 7',
+  '/credits': 'Credits',
+  '/story-source': 'Story Source',
+};
+
 async function adminFetch(path, options = {}) {
   const password = sessionStorage.getItem('adminPassword') || '';
   const res = await fetch(path, {
@@ -115,6 +128,19 @@ function renderDashboard(data) {
       </div>
 
       <div class="admin-section">
+        <h2>Page locks</h2>
+        ${data.locked ? '<p class="admin-hint">Only usable while the site is unlocked above.</p>' : ''}
+        <div class="page-lock-grid">
+          ${data.pageLocks.map(p => `
+            <div class="lock-row">
+              <input type="checkbox" class="pageLockToggle" data-page="${escapeHtml(p.page)}" ${p.locked ? 'checked' : ''} ${data.locked ? 'disabled' : ''}>
+              <label>${escapeHtml(PAGE_LABELS[p.page] || p.page)}</label>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="admin-section">
         <h2>Users (${data.users.length})</h2>
         <div class="admin-table-wrap">
           <table class="admin-table">
@@ -175,7 +201,20 @@ function renderDashboard(data) {
       method: 'POST',
       body: JSON.stringify({ locked }),
     });
-    e.target.disabled = false;
+    loadDashboard();
+  });
+
+  s.querySelectorAll('.pageLockToggle').forEach(input => {
+    input.addEventListener('change', async (e) => {
+      const page = e.target.dataset.page;
+      const locked = e.target.checked;
+      e.target.disabled = true;
+      await adminFetch('/api/admin/toggle-page-lock', {
+        method: 'POST',
+        body: JSON.stringify({ page, locked }),
+      });
+      e.target.disabled = false;
+    });
   });
 
   s.querySelectorAll('[data-reset]').forEach(btn => {
