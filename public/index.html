@@ -37,7 +37,7 @@
 }
 .logo-block{
   text-align:right;
-  margin-top:75px;
+  margin-top:95px;
   padding-right:60px;
 }
 .logo-block .game-title{
@@ -60,10 +60,10 @@
   display:flex;flex-direction:column;
   gap:19px;
   align-items:flex-end;
-  padding-right:105px;
+  padding-right:120px;
 }
 .menu-item{
-  font-size:calc(1.1rem + 6px);
+  font-size:calc(1.1rem + 9px);
   font-style:italic;
   font-weight:700;
   color:#fdf6e3;
@@ -89,7 +89,7 @@
   color:#FFD966;
 }
 .menu-item.primary{
-  font-size:calc(1.2rem + 6px);
+  font-size:calc(1.2rem + 9px);
 }
 .logo-image{
   width:clamp(214.5px, 33.15vw, 370.5px);
@@ -118,6 +118,7 @@ function showTitleScreen(){
         <button class="menu-item primary" id="playBtn"><span class="arrow">➤</span> Play</button>
         <button class="menu-item" id="chapterSelectBtn"><span class="arrow">➤</span> Chapter Select</button>
         <button class="menu-item" id="creditsBtn"><span class="arrow">➤</span> Credits</button>
+        <button class="menu-item" id="storySourceBtn"><span class="arrow">➤</span> Story Source</button>
       </div>
     </div>
   `, 'no-fade-bg');
@@ -130,6 +131,9 @@ function showTitleScreen(){
   };
   s.querySelector('#creditsBtn').onclick = () => {
     location.href = '/credits';
+  };
+  s.querySelector('#storySourceBtn').onclick = () => {
+    location.href = '/story-source';
   };
 }
 

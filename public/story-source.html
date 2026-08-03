@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+<title>Story Source</title>
+<link rel="stylesheet" href="css/shared.css">
+<link rel="stylesheet" href="css/chapter-themes.css">
+</head>
+<body data-theme="meadow">
+<div id="app"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/shared.js"></script>
+<script src="js/supabase-client.js"></script>
+<script>
+function showStorySource(){
+  clearScreens();
+  const s = showScreen(`
+    <h2>Story Source</h2>
+    <p>[TODO: render docs/The_Seed_Chronicles.md — see docs/plan.txt]</p>
+    <button class="btn" id="backBtn">Back</button>
+  `);
+  addRestartBtn(s);
+  s.querySelector('#backBtn').onclick = () => location.href = '/';
+}
+requireSession(showStorySource);
+</script>
+</body>
+</html>
