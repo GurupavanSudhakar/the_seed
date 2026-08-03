@@ -139,6 +139,16 @@ body{
 }
 @keyframes lockedFlashIn{0%{opacity:0}100%{opacity:1}}
 @keyframes lockedTextIn{0%{transform:scale(3);opacity:0}100%{transform:scale(1);opacity:1}}
+.locked-return-btn{
+  padding:14px 36px;
+  border:none;border-radius:4px;
+  font-size:1.05rem;font-weight:700;
+  font-family:inherit;
+  cursor:pointer;
+  background:#2FA85A;
+  color:#fff;
+  -webkit-user-select:none;user-select:none;
+}
 
 /* ===== Plain utility forms (login.html / signup.html) ===== */
 .auth-form{

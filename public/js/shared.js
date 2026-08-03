@@ -54,7 +54,7 @@ function showLockedScreen() {
   const s = showScreen(`
     <div class="locked-overlay">
       <span class="locked-text">PAGE LOCKED</span>
-      <button class="btn" id="lockedReturnBtn">Return to accessible page</button>
+      <button class="locked-return-btn" id="lockedReturnBtn">Return</button>
     </div>
   `, 'locked-screen');
   s.querySelector('#lockedReturnBtn').onclick = () => location.href = dest;
