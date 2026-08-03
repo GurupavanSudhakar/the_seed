@@ -94,17 +94,6 @@
   opacity:1;
   transform:translateX(0);
 }
-.version-tag{
-  position:absolute;
-  bottom:16px;right:20px;
-  z-index:2;
-  font-size:0.75rem;
-  color:#cfcabb;
-  opacity:0.8;
-  text-align:right;
-  text-shadow:0 1px 3px rgba(0,0,0,0.8);
-  line-height:1.5;
-}
 .logo-image{
   width:clamp(214.5px, 33.15vw, 370.5px);
   height:auto;
@@ -134,7 +123,6 @@ function showTitleScreen(){
         <button class="menu-item" id="creditsBtn"><span class="arrow">➤</span> Credits</button>
       </div>
     </div>
-    <div class="version-tag">Ver. 2.0.0<br>&copy; 2026</div>
   `, 'no-fade-bg');
 
   s.querySelector('#playBtn').onclick = () => {
