@@ -8,6 +8,14 @@
 const $ = id => document.getElementById(id);
 const app = $('app');
 
+// Single flag controlling whether the game is publicly revealed yet.
+// Flip to false + redeploy on launch day. Every page except /signup itself
+// redirects there while locked, since it's the only link ever shared.
+const LOCKED = true;
+if (LOCKED && location.pathname !== '/signup' && location.pathname !== '/signup.html') {
+  location.replace('/signup');
+}
+
 function clearScreens(){
   app.querySelectorAll('.screen,.overlay').forEach(e=>e.remove());
 }

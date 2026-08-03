@@ -111,7 +111,9 @@
 </head>
 <body data-theme="meadow">
 <div id="app"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="js/shared.js"></script>
+<script src="js/supabase-client.js"></script>
 <script>
 // ===== Title Screen (Zelda BOTW style) =====
 function showTitleScreen(){
@@ -143,8 +145,18 @@ function showTitleScreen(){
   };
 }
 
-// Start
-showTitleScreen();
+// Start — shared.js already redirected to /signup if LOCKED, so this only
+// runs in the unlocked case: gate the title screen on an active session.
+if (!LOCKED) {
+  (async () => {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) {
+      location.replace('/login');
+      return;
+    }
+    showTitleScreen();
+  })();
+}
 </script>
 </body>
 </html>

@@ -11,17 +11,17 @@
 // the elevated queries, per that package's guidance for admin-only access with
 // no specific inbound auth mode required.
 
-const { createAdminClient } = require('@supabase/server/core');
+import { createAdminClient } from '@supabase/server/core';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
 
-  const { email, password, inviteCode } = req.body || {};
-  if (!email || !password || !inviteCode) {
-    res.status(400).json({ error: 'Missing email, password, or invite code' });
+  const { username, email, password, inviteCode } = req.body || {};
+  if (!username || !email || !password || !inviteCode) {
+    res.status(400).json({ error: 'Missing username, email, password, or invite code' });
     return;
   }
   if (String(password).length < 8) {
@@ -56,6 +56,7 @@ module.exports = async function handler(req, res) {
     email,
     password,
     email_confirm: true,
+    user_metadata: { username },
   });
 
   if (createErr) {

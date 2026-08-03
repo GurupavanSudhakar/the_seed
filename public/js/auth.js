@@ -7,24 +7,47 @@ function wireLoginForm(){
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     errEl.textContent = '';
-    const email = $('loginEmail').value.trim();
+    const username = $('loginUsername').value.trim();
     const password = $('loginPassword').value;
 
-    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    let res;
+    try {
+      res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+    } catch (err) {
+      errEl.textContent = 'Could not reach the server. Try again.';
+      return;
+    }
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      errEl.textContent = body.error || 'Wrong username or password.';
+      return;
+    }
+
+    const { access_token, refresh_token } = await res.json();
+    const { error } = await supabaseClient.auth.setSession({ access_token, refresh_token });
     if (error) {
-      errEl.textContent = 'Wrong email or password.';
+      errEl.textContent = 'Could not log in. Try again.';
       return;
     }
     location.href = '/';
   });
 }
 
-function wireSignupForm(){
+// onSuccess is called after account creation instead of signing the user in —
+// signup and login are deliberately separate links (see docs/architecture.md),
+// so this never creates a session or redirects.
+function wireSignupForm(onSuccess){
   const form = $('signupForm');
   const errEl = $('signupError');
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     errEl.textContent = '';
+    const username = $('signupUsername').value.trim();
     const email = $('signupEmail').value.trim();
     const password = $('signupPassword').value;
     const inviteCode = $('signupInviteCode').value.trim();
@@ -34,7 +57,7 @@ function wireSignupForm(){
       res = await fetch('/api/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, inviteCode }),
+        body: JSON.stringify({ username, email, password, inviteCode }),
       });
     } catch (err) {
       errEl.textContent = 'Could not reach the server. Try again.';
@@ -47,11 +70,6 @@ function wireSignupForm(){
       return;
     }
 
-    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-    if (error) {
-      errEl.textContent = 'Account created — log in from the login page.';
-      return;
-    }
-    location.href = '/';
+    onSuccess();
   });
 }

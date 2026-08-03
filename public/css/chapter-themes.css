@@ -85,6 +85,26 @@ body[data-theme="battle"].tone-sincere{
   filter:saturate(0.35);
 }
 
+body[data-theme="signup"]{
+  --bg-top:#07060a;
+  --bg-bottom:#000000;
+  --accent-sun:#F0C755;
+  --accent-leaf:#8FA646;
+  --text-dark:#F5E9C8;
+  --text-soft:#C9A227;
+  --panel:rgba(20,17,8,0.55);
+}
+
+body[data-theme="login"]{
+  --bg-top:#04070a;
+  --bg-bottom:#000000;
+  --accent-sun:#F0C755;
+  --accent-leaf:#8FA646;
+  --text-dark:#F5E9C8;
+  --text-soft:#C9A227;
+  --panel:rgba(20,17,8,0.55);
+}
+
 body[data-theme="credits"]{
   --bg-top:#2c1f4a;
   --bg-bottom:#120a24;
